@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://q6gnqeh2rxbg" path="res://Scenes/Table.tscn" id="1_j0p05"]
 [ext_resource type="PackedScene" uid="uid://bk6660135j2je" path="res://Scenes/Dice.tscn" id="2_5nsto"]
-[ext_resource type="Script" uid="uid://bcdwgx0nungg4" path="res://Scenes/hand.gd" id="2_gjpho"]
-[ext_resource type="Script" uid="uid://bi1tavelmkp1t" path="res://Scenes/rotator.gd" id="3_5nsto"]
+[ext_resource type="Script" uid="uid://bcdwgx0nungg4" path="res://Scripts/hand.gd" id="2_gjpho"]
+[ext_resource type="Script" uid="uid://bi1tavelmkp1t" path="res://Scripts/rotator.gd" id="3_5nsto"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_j0p05"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -80,3 +80,45 @@ environment = SubResource("Environment_gjpho")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Enviro"]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
 shadow_enabled = true
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Lbl_Score" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "10000"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -71.0
+offset_top = -40.0
+offset_right = 71.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Btn_Relancer" type="Button" parent="Control/HBoxContainer"]
+layout_mode = 2
+text = "Relancer"
+
+[node name="Btn_Garder" type="Button" parent="Control/HBoxContainer"]
+layout_mode = 2
+text = "Garder"

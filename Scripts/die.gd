@@ -4,6 +4,14 @@ extends RigidBody3D
 @export var value_label : Label3D
 @export var label_offset := 0.2
 
+enum State {
+    IN_HAND,
+    ON_TABLE,
+    SELECTED
+}
+
+var state : State
+
 var values : Dictionary = {
     Vector3.UP : 1,
     Vector3.FORWARD : 5,
@@ -13,11 +21,17 @@ var values : Dictionary = {
     Vector3.DOWN : 6
 }
 
+var last_position_on_table : Vector3
+
 func _ready() -> void:
+    state = State.ON_TABLE
     EventBus.throw_dice.connect(_on_throw_dice)
     value_label.visible = false
 
 func _on_throw_dice() -> void:
+    if state != State.ON_TABLE:
+        return
+    
     apply_impulse(Vector3.UP * 2)
     apply_torque_impulse(Vector3(randf(), randf(), randf()) * 5)
 
@@ -65,3 +79,18 @@ func get_top_value() -> int:
         return int(values[dir])
 
     return 0
+
+func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+    if not event.is_action_pressed("click"):
+        return
+
+    if state == State.IN_HAND:
+        return
+    
+    if state == State.ON_TABLE:
+        state = State.SELECTED
+        last_position_on_table = global_position
+        EventBus.store_die.emit(self)
+    elif state == State.SELECTED:
+        state = State.ON_TABLE
+        EventBus.unstore_die.emit(self)
