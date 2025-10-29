@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://q6gnqeh2rxbg"]
+
+[ext_resource type="Texture2D" uid="uid://cw5nuiuktol3m" path="res://Assets/Textures/wood.png" id="1_5ervl"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1lgjl"]
+height = 0.1
+radius = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1lgjl"]
+albedo_texture = ExtResource("1_5ervl")
+metallic_specular = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5ervl"]
+material = SubResource("StandardMaterial3D_1lgjl")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.1
+
+[node name="Table" type="Node3D"]
+physics_interpolation_mode = 1
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("CylinderShape3D_1lgjl")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("CylinderMesh_5ervl")

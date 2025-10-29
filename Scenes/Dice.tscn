@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://bk6660135j2je"]
+
+[ext_resource type="Script" uid="uid://dxls2l2xnrgf1" path="res://Scripts/dice.gd" id="1_wpqjs"]
+[ext_resource type="PackedScene" uid="uid://dgljnnl6qof6" path="res://Scenes/BlenderMeshes/DiceMesh.tscn" id="2_dcpc8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1a7br"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Body" type="RigidBody3D" node_paths=PackedStringArray("value_label")]
+physics_interpolation_mode = 1
+continuous_cd = true
+script = ExtResource("1_wpqjs")
+value_label = NodePath("Label3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_1a7br")
+
+[node name="DiceMesh" parent="." instance=ExtResource("2_dcpc8")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1378054, 0)
+pixel_size = 0.0005
+billboard = 1
+text = "6"
+font_size = 400
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

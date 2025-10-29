@@ -1,0 +1,97 @@
+[gd_scene load_steps=11 format=3 uid="uid://dgljnnl6qof6"]
+
+[ext_resource type="PackedScene" uid="uid://kp5oh2loi00a" path="res://Assets/Blender/Dice.blend" id="1_1pf5t"]
+[ext_resource type="Script" uid="uid://bjf1frxdat0h" path="res://Scenes/BlenderMeshes/dice_mesh.gd" id="2_2p4rm"]
+[ext_resource type="Material" uid="uid://trkb4vu1c8w2" path="res://Assets/Materials/dice_face_mat.tres" id="3_j404p"]
+[ext_resource type="Texture2D" uid="uid://cyh631ok8x416" path="res://Assets/Textures/T_Dice_1_trans.png" id="4_qpbrg"]
+[ext_resource type="Texture2D" uid="uid://b0r762elirrr8" path="res://Assets/Textures/T_Dice_2_trans.png" id="5_thjac"]
+[ext_resource type="Texture2D" uid="uid://7vpykkay0aus" path="res://Assets/Textures/T_Dice_3_trans.png" id="6_w407t"]
+[ext_resource type="Texture2D" uid="uid://ffgew4dmsm5k" path="res://Assets/Textures/T_Dice_4_trans.png" id="7_udu4c"]
+[ext_resource type="Texture2D" uid="uid://cuwoht5ilgkvu" path="res://Assets/Textures/T_Dice_5_trans.png" id="8_off1l"]
+[ext_resource type="Texture2D" uid="uid://o25y0kvec6ss" path="res://Assets/Textures/T_Dice_6_trans.png" id="9_qeuji"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_oqo1o"]
+resource_name = "Dice_Cube"
+_surfaces = [{
+"aabb": AABB(-1, 1, -1, 2, 1e-05, 2),
+"attribute_data": PackedByteArray(255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface.1",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 0, 0, 255, 191, 0, 0, 0, 0, 255, 255, 255, 191, 0, 0, 0, 0, 0, 0, 255, 191, 255, 255, 0, 0, 255, 255, 255, 191, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127)
+}, {
+"aabb": AABB(-1, -1, -1, 1e-05, 2, 2),
+"attribute_data": PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface.2",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 63, 255, 127, 255, 63, 255, 127, 255, 63, 255, 127, 255, 63, 255, 127)
+}, {
+"aabb": AABB(-1, -1, 1, 2, 2, 1e-05),
+"attribute_data": PackedByteArray(255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface.3",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(255, 255, 0, 0, 0, 0, 0, 128, 0, 0, 255, 255, 0, 0, 0, 128, 255, 255, 255, 255, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 128, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255)
+}, {
+"aabb": AABB(1, -1, -1, 1e-05, 2, 2),
+"attribute_data": PackedByteArray(255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface.4",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 255, 191, 0, 0, 255, 255, 255, 255, 255, 191, 0, 0, 255, 255, 0, 0, 255, 191, 0, 0, 0, 0, 255, 255, 255, 191, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0)
+}, {
+"aabb": AABB(-1, -1, -1, 2, 2, 1e-05),
+"attribute_data": PackedByteArray(0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surface.5",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127, 255, 255, 255, 127)
+}, {
+"aabb": AABB(-1, -1, -1, 2, 1e-05, 2),
+"attribute_data": PackedByteArray(0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Surcace.6",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 255, 63, 255, 255, 0, 0, 255, 255, 255, 63, 255, 255, 0, 0, 0, 0, 255, 63, 0, 0, 0, 0, 255, 255, 255, 63, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127, 0, 0, 255, 127)
+}]
+blend_shape_mode = 0
+
+[node name="Dice" node_paths=PackedStringArray("mesh_instance") instance=ExtResource("1_1pf5t")]
+script = ExtResource("2_2p4rm")
+mesh_instance = NodePath("Surface_6")
+base_material = ExtResource("3_j404p")
+face_textures = Array[Texture2D]([ExtResource("4_qpbrg"), ExtResource("5_thjac"), ExtResource("6_w407t"), ExtResource("7_udu4c"), ExtResource("8_off1l"), ExtResource("9_qeuji")])
+
+[node name="Surface_6" parent="." index="0"]
+mesh = SubResource("ArrayMesh_oqo1o")
+
+[node name="Shadows" type="MeshInstance3D" parent="." index="1"]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+cast_shadow = 3
+mesh = SubResource("ArrayMesh_oqo1o")
+skeleton = NodePath("")
