@@ -47,6 +47,8 @@ func store_die(die: Die) -> void:
     stored_dice.append(die)
     next_store_index = stored_dice.size()
 
+    GameContext.CurrentScoredValue = get_total_stored_value()
+
 
 func unstore_die(die: Die) -> void:
     # Move the die back to the table
@@ -72,6 +74,8 @@ func unstore_die(die: Die) -> void:
     # Update next_store_index to the current count of stored dice
     next_store_index = stored_dice.size()
 
+    GameContext.CurrentScoredValue = get_total_stored_value()
+
 
 func _physics_process(_delta: float) -> void:
     if not requested_store_dice:
@@ -90,3 +94,9 @@ func _physics_process(_delta: float) -> void:
         die.global_position = store_position
         index += 1
         die.freeze = false
+
+func get_total_stored_value() -> int:
+    var total := 0
+    for die in stored_dice:
+        total += die.get_top_value()
+    return total

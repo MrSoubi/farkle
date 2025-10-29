@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cwgd7wyy8l0h7"]
+[gd_scene load_steps=9 format=3 uid="uid://cwgd7wyy8l0h7"]
 
 [ext_resource type="PackedScene" uid="uid://q6gnqeh2rxbg" path="res://Scenes/Table.tscn" id="1_j0p05"]
 [ext_resource type="PackedScene" uid="uid://bk6660135j2je" path="res://Scenes/Dice.tscn" id="2_5nsto"]
 [ext_resource type="Script" uid="uid://bcdwgx0nungg4" path="res://Scripts/hand.gd" id="2_gjpho"]
 [ext_resource type="Script" uid="uid://bi1tavelmkp1t" path="res://Scripts/rotator.gd" id="3_5nsto"]
+[ext_resource type="Script" uid="uid://cmjpgjipywig6" path="res://Scenes/lbl_stored_value.gd" id="5_p70al"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_j0p05"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -101,6 +102,18 @@ offset_bottom = 23.0
 grow_horizontal = 2
 text = "10000"
 horizontal_alignment = 1
+
+[node name="Lbl_StoredValue" type="Label" parent="Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 46.0
+grow_vertical = 0
+text = "10000"
+horizontal_alignment = 1
+script = ExtResource("5_p70al")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control"]
 layout_mode = 1
