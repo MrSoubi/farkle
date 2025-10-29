@@ -11,12 +11,15 @@ class_name StorageCoordinator
 # StorageModel: a Node we instantiate locally
 
 var storing_positions : Array[Vector3] = []
-var storage_model : StorageModel = null
+# StorageModel is provided as an autoload singleton. Use it directly.
+var storage_model = null
 
 func _ready() -> void:
-    # Create and attach a storage model to keep lists in one place
-    storage_model = StorageModel.new()
-    add_child(storage_model)
+    # StorageModel is an autoload (singleton). Use the global directly.
+    storage_model = StorageModel if typeof(StorageModel) != TYPE_NIL else null
+
+    if storage_model == null:
+        push_error("StorageCoordinator: StorageModel autoload not found. Please add res://Scripts/storage_model.gd as an autoload named StorageModel.")
 
     _recalculate_storing_positions()
     EventBus.store_die.connect(_on_store_die)
@@ -33,7 +36,7 @@ func _on_store_die(die: Die) -> void:
     if die.state == Die.State.MOVING or die.state == Die.State.BANKED:
         return
 
-    var slot_index := storage_model.add_stored(die)
+    var slot_index: int = storage_model.add_stored(die)
     _recalculate_storing_positions()
     var pos := Vector3.ZERO
     if slot_index < storing_positions.size():
@@ -62,11 +65,12 @@ func _on_unstore_die(die: Die) -> void:
     storage_model.remove_stored(die)
     # shift remaining stored dice to fill slots
     _recalculate_storing_positions()
-    for i in range(storage_model.stored_dice.size()):
-        if i >= storing_positions.size():
-            break
-        var d: Die = storage_model.stored_dice[i]
-        var p := storing_positions[i]
+    # work on a snapshot to avoid index errors if the underlying array changes during awaits
+    var snapshot: Array[Die] = storage_model.stored_dice.duplicate()
+    var limit: int = min(snapshot.size(), storing_positions.size())
+    for i in range(limit):
+        var d: Die = snapshot[i]
+        var p: Vector3 = storing_positions[i]
         await get_tree().physics_frame
         var tw2 = DieMover.prepare_tween_for_die(d, p)
         await tw2.finished
@@ -81,9 +85,9 @@ func _on_bank_dice() -> void:
         return
 
     # accumulate authoritative banked list
-    var current_banked := storage_model.collect_current_banked(dices)
-    var moved := storage_model.clear_stored_to_banked()
-    var total := current_banked.size() + moved.size()
+    var current_banked: Array = storage_model.collect_current_banked(dices)
+    var moved: Array = storage_model.clear_stored_to_banked()
+    var total: int = current_banked.size() + moved.size()
     if total == 0:
         return
 
@@ -99,10 +103,10 @@ func _on_bank_dice() -> void:
         current_banked[i].freeze = false
 
     # place newly banked
-    var start_idx := current_banked.size()
+    var start_idx: int = current_banked.size()
     for j in range(moved.size()):
         var d: Die = moved[j]
-        var pos_idx := start_idx + j
+        var pos_idx: int = start_idx + j
         if pos_idx >= positions.size():
             break
         await get_tree().physics_frame
