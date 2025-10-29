@@ -8,7 +8,12 @@ Les nouvelles pièces sont :
 
 - `Scripts/position_calculator.gd` : fonctions pures pour calculer les positions de stockage et de bank (pas d'effets de bord). Utilisez `PositionCalculator.calculate_storing_positions(...)` et `PositionCalculator.calculate_bank_positions(...)`.
 
-- `Scripts/die_mover.gd` : helper chargé d'animer le déplacement d'un dé. Ce fichier est attendu comme autoload (singleton) nommé `DieMover` et expose `prepare_tween_for_die(die, target, ...)` qui prépare un Tween et gèle le dé avant l'animation. Appeler ensuite `await tw.finished` puis dé-geler le dé (le coordinator le fait automatiquement).
+- `Scripts/die_mover.gd` : helper chargé de créer le Tween qui anime le déplacement d'un dé. Ce fichier est attendu comme autoload (singleton) nommé `DieMover` et expose `prepare_tween_for_die(die, target, ...)` qui crée et renvoie un `SceneTreeTween` configuré pour animer la propriété `global_position`.
+
+  Important : `DieMover` ne gère plus le verrouillage ni l'état du dé — le contract est que l'appelant doit :
+  1. appeler `die.begin_animation()` pour verrouiller/geler le dé avant l'animation,
+  2. appeler `var tw = DieMover.prepare_tween_for_die(die, target)` puis `await tw.finished`,
+  3. appeler `die.end_animation(final_state)` pour restaurer/déverrouiller le dé (le `StorageCoordinator` fait cela automatiquement).
 
 - `Scripts/storage_model.gd` : modèle léger (Node) qui contient les listes `stored_dice` et `banked_dice` et expose des méthodes simples (`add_stored`, `remove_stored`, `clear_stored_to_banked`, ...). On crée une instance locale quand on démarre la coordination.
 
@@ -18,8 +23,12 @@ Notes d'intégration
 -------------------
 - J'ai laissé `Scripts/hand.gd` comme wrapper (extends `StorageCoordinator`) pour préserver toute référence éventuelle. Le fichier canonique est `storage_coordinator.gd`.
 - Ajoutez ces autoloads dans Project Settings -> Autoload (si ce n'est pas déjà fait) :
+ - `Scripts/storage_model.gd` : modèle léger (Node) qui contient les listes `stored_dice` et `banked_dice` et expose des méthodes simples (`add_stored`, `remove_stored`, `clear_stored_to_banked`, ...). Ce projet attend `StorageModel` comme autoload singleton pour partager l'état de stockage entre scènes.
+
+- J'ai laissé `Scripts/hand.gd` comme wrapper (extends `StorageCoordinator`) pour préserver toute référence éventuelle. Le fichier canonique est `storage_coordinator.gd`.
+- Ajoutez ces autoloads dans Project Settings -> Autoload (si ce n'est pas déjà fait) :
   - `res://Scripts/die_mover.gd` -> Name: `DieMover`
-  - (Optionnel) `res://Scripts/storage_model.gd` -> Name: `StorageModel` (mais la coordinator crée sa propre instance par défaut)
+  - `res://Scripts/storage_model.gd` -> Name: `StorageModel`
 
 Quick test
 ----------
