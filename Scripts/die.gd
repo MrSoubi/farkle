@@ -5,7 +5,8 @@ enum State {
     IN_HAND,
     ON_TABLE,
     SELECTED,
-    MOVING
+    MOVING,
+    BANKED
 }
 
 var state : State
@@ -79,7 +80,7 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
     if not event.is_action_pressed("click"):
         return
 
-    if state == State.IN_HAND or state == State.MOVING:
+    if state == State.IN_HAND or state == State.MOVING or state == State.BANKED:
         return
     
     if state == State.ON_TABLE:
