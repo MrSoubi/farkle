@@ -27,16 +27,16 @@ glow_enabled = true
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, -1.2398566e-08, -2.8106315e-08, 2.9802319e-08, 0.6134586, 0.789727, 7.4505797e-09, -0.7897269, 0.6134586, 5.9604645e-08, 1.3142173, 1.2895601)
 
-[node name="Table" parent="." instance=ExtResource("1_j0p05")]
-
-[node name="Hand" type="Node3D" parent="Table" node_paths=PackedStringArray("dice", "bank_position")]
+[node name="Hand" type="Node3D" parent="." node_paths=PackedStringArray("dice", "bank_position")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 0.60373056)
 script = ExtResource("2_q2d71")
-dice = [NodePath("../../Dice"), NodePath("../../Dice2"), NodePath("../../Dice3"), NodePath("../../Dice4"), NodePath("../../Dice5"), NodePath("../../Dice6")]
+dice = [NodePath("../Dice"), NodePath("../Dice2"), NodePath("../Dice3"), NodePath("../Dice4"), NodePath("../Dice5"), NodePath("../Dice6")]
 bank_position = NodePath("../Bank")
 
-[node name="Bank" type="Node3D" parent="Table"]
+[node name="Bank" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 0.9111248)
+
+[node name="Table" parent="." instance=ExtResource("1_j0p05")]
 
 [node name="Dice" parent="." instance=ExtResource("2_5nsto")]
 transform = Transform3D(0.87592804, 0.48244175, 0, -0.45156756, 0.8198724, 0.35198867, 0.16981404, -0.30831674, 0.9360043, 0, 0.306934, 0)

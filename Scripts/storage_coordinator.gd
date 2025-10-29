@@ -27,6 +27,8 @@ func _ready() -> void:
     EventBus.store_die.connect(_on_store_die)
     EventBus.unstore_die.connect(_on_unstore_die)
     EventBus.bank_dice.connect(_on_bank_dice)
+    # Coordinate throw requests so we only emit the actual throw when all dice are idle
+    EventBus.throw_dice_request.connect(_on_throw_request)
 
 func _recalculate_storing_positions() -> void:
     storing_positions = PositionCalculator.calculate_storing_positions(dice.size(), spacing, line_direction, self)
@@ -124,6 +126,9 @@ func _handle_bank_dice() -> void:
 
     var positions: Array[Vector3] = PositionCalculator.calculate_bank_positions(total, spacing, line_direction, bank_position)
 
+    for d in dice:
+        d.begin_animation()  # prevent interaction during bank animation
+    
     # reposition already banked
     for i in range(current_banked.size()):
         if i >= positions.size():
@@ -134,9 +139,10 @@ func _handle_bank_dice() -> void:
         await get_tree().physics_frame
         var tw = DieMover.prepare_tween_for_die(d, positions[i])
         await tw.finished
-        # restore previous/banked state and unlock
-        d.end_animation()
 
+    for d in dice:
+        d.end_animation()  # re-enable interaction
+    
     # place newly banked
     var start_idx: int = current_banked.size()
     for j in range(moved.size()):
@@ -154,6 +160,18 @@ func _handle_bank_dice() -> void:
 
     GameContext.banked_value += GameContext.current_scored_value
     GameContext.current_scored_value = 0
+
+func _on_throw_request() -> void:
+    # If any die is still moving, ignore the throw request entirely for this game.
+    for d in dice:
+        if d == null:
+            continue
+        if d.state == Die.State.MOVING:
+            # ignore request while any die is moving
+            return
+
+    # All dice are settled — emit the real throw signal that each Die listens to
+    EventBus.throw_dice.emit()
 
 func _process_queue() -> void:
     processing_queue = true
