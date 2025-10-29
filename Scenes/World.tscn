@@ -29,10 +29,10 @@ transform = Transform3D(1, -1.2398566e-08, -2.8106315e-08, 2.9802319e-08, 0.6134
 
 [node name="Table" parent="." instance=ExtResource("1_j0p05")]
 
-[node name="Hand" type="Node3D" parent="Table" node_paths=PackedStringArray("dices", "bank_position")]
+[node name="Hand" type="Node3D" parent="Table" node_paths=PackedStringArray("dice", "bank_position")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 0.60373056)
 script = ExtResource("2_q2d71")
-dices = [NodePath("../../Dice"), NodePath("../../Dice2"), NodePath("../../Dice3"), NodePath("../../Dice4"), NodePath("../../Dice5"), NodePath("../../Dice6")]
+dice = [NodePath("../../Dice"), NodePath("../../Dice2"), NodePath("../../Dice3"), NodePath("../../Dice4"), NodePath("../../Dice5"), NodePath("../../Dice6")]
 bank_position = NodePath("../Bank")
 
 [node name="Bank" type="Node3D" parent="Table"]

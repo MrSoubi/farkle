@@ -1,6 +1,6 @@
 extends Node3D
 class_name StorageCoordinator
-@export var dices : Array[Die] = []
+@export var dice : Array[Die] = []
 @export var spacing : float = 0.15
 @export var line_direction : Vector3 = Vector3(1, 0, 0)
 @export var bank_position : Node3D
@@ -29,7 +29,7 @@ func _ready() -> void:
     EventBus.bank_dice.connect(_on_bank_dice)
 
 func _recalculate_storing_positions() -> void:
-    storing_positions = PositionCalculator.calculate_storing_positions(dices.size(), spacing, line_direction, self)
+    storing_positions = PositionCalculator.calculate_storing_positions(dice.size(), spacing, line_direction, self)
 
 func _on_store_die(die: Die) -> void:
     # enqueue store requests to avoid overlapping animations
@@ -54,7 +54,7 @@ func _handle_store_die(die: Die) -> void:
     else:
         pos = to_global(Vector3.ZERO)
 
-    GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
+    GameContext.current_scored_value = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
     # perform move during the next physics frame and await completion
     die.begin_animation() # sets MOVING, locked, freeze and clears velocities
@@ -101,7 +101,7 @@ func _handle_unstore_die(die: Die) -> void:
         await tw2.finished
         d.end_animation(Die.State.IN_HAND)
 
-    GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
+    GameContext.current_scored_value = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
 func _on_bank_dice() -> void:
     # enqueue bank requests
@@ -116,7 +116,7 @@ func _handle_bank_dice() -> void:
         return
 
     # accumulate authoritative banked list
-    var current_banked: Array[Die] = storage_model.collect_current_banked(dices)
+    var current_banked: Array[Die] = storage_model.collect_current_banked(dice)
     var moved: Array[Die] = storage_model.clear_stored_to_banked()
     var total: int = current_banked.size() + moved.size()
     if total == 0:
@@ -152,8 +152,8 @@ func _handle_bank_dice() -> void:
         # Set explicit final state to BANKED
         d.end_animation(Die.State.BANKED)
 
-    GameContext.BankedValue += GameContext.CurrentScoredValue
-    GameContext.CurrentScoredValue = 0
+    GameContext.banked_value += GameContext.current_scored_value
+    GameContext.current_scored_value = 0
 
 func _process_queue() -> void:
     processing_queue = true
