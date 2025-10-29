@@ -1,6 +1,6 @@
 extends Node3D
 class_name StorageCoordinator
-@export var dices : Array[Die] = []
+@export var dice : Array[Die] = []
 @export var spacing : float = 0.15
 @export var line_direction : Vector3 = Vector3(1, 0, 0)
 @export var bank_position : Node3D
@@ -29,7 +29,7 @@ func _ready() -> void:
     EventBus.bank_dice.connect(_on_bank_dice)
 
 func _recalculate_storing_positions() -> void:
-    storing_positions = PositionCalculator.calculate_storing_positions(dices.size(), spacing, line_direction, self)
+    storing_positions = PositionCalculator.calculate_storing_positions(dice.size(), spacing, line_direction, self)
 
 func _on_store_die(die: Die) -> void:
     # enqueue store requests to avoid overlapping animations
@@ -116,7 +116,7 @@ func _handle_bank_dice() -> void:
         return
 
     # accumulate authoritative banked list
-    var current_banked: Array[Die] = storage_model.collect_current_banked(dices)
+    var current_banked: Array[Die] = storage_model.collect_current_banked(dice)
     var moved: Array[Die] = storage_model.clear_stored_to_banked()
     var total: int = current_banked.size() + moved.size()
     if total == 0:
