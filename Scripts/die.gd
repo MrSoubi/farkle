@@ -1,13 +1,11 @@
 class_name Die
 extends RigidBody3D
 
-@export var value_label : Label3D
-@export var label_offset := 0.2
-
 enum State {
     IN_HAND,
     ON_TABLE,
-    SELECTED
+    SELECTED,
+    MOVING
 }
 
 var state : State
@@ -26,7 +24,6 @@ var last_position_on_table : Vector3
 func _ready() -> void:
     state = State.ON_TABLE
     EventBus.throw_dice.connect(_on_throw_dice)
-    value_label.visible = false
 
 func _on_throw_dice() -> void:
     if state != State.ON_TABLE:
@@ -34,14 +31,12 @@ func _on_throw_dice() -> void:
     
     apply_impulse(Vector3.UP * 2)
     apply_torque_impulse(Vector3(randf(), randf(), randf()) * 5)
+    state = State.MOVING
 
-func _on_mouse_entered() -> void:
-    value_label.global_position = global_position + Vector3.UP * label_offset
-    value_label.text = str(get_top_value())
-    value_label.visible = true
-
-func _on_mouse_exited() -> void:
-    value_label.visible = false
+func _physics_process(delta):
+    if state == State.MOVING:
+        if linear_velocity.length() == 0 and angular_velocity.length() == 0:
+            state = State.ON_TABLE
 
 func get_top_value() -> int:
     var up = Vector3.UP
@@ -84,7 +79,7 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
     if not event.is_action_pressed("click"):
         return
 
-    if state == State.IN_HAND:
+    if state == State.IN_HAND or state == State.MOVING:
         return
     
     if state == State.ON_TABLE:
