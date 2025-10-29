@@ -34,6 +34,8 @@ EventBus="*res://Scripts/EventBus.gd"
 DevShortcuts="*res://Scripts/dev_shortcuts.gd"
 GameContext="*res://Scripts/GameContext.gd"
 ScoreCalculator="*res://Scenes/ScoreCalculator.tscn"
+DieMover="*res://Scripts/die_mover.gd"
+StorageModel="*res://Scripts/storage_model.gd"
 
 [editor_plugins]
 

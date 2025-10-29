@@ -1,5 +1,4 @@
 extends Node
-class_name StorageModel
 
 var stored_dice : Array = []
 var banked_dice : Array = []
