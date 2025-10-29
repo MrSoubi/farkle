@@ -13,6 +13,8 @@ class_name StorageCoordinator
 var storing_positions : Array[Vector3] = []
 # StorageModel is provided as an autoload singleton. Use it directly.
 var storage_model = null
+var event_queue: Array = []
+var processing_queue: bool = false
 
 func _ready() -> void:
     # StorageModel is an autoload (singleton). Use the global directly.
@@ -30,6 +32,14 @@ func _recalculate_storing_positions() -> void:
     storing_positions = PositionCalculator.calculate_storing_positions(dices.size(), spacing, line_direction, self)
 
 func _on_store_die(die: Die) -> void:
+    # enqueue store requests to avoid overlapping animations
+    if die == null:
+        return
+    event_queue.append({"type": "store", "die": die})
+    if not processing_queue:
+        _process_queue()
+
+func _handle_store_die(die: Die) -> void:
     # Defensive: ignore invalid states
     if die == null:
         return
@@ -38,7 +48,7 @@ func _on_store_die(die: Die) -> void:
 
     var slot_index: int = storage_model.add_stored(die)
     _recalculate_storing_positions()
-    var pos := Vector3.ZERO
+    var pos: Vector3 = Vector3.ZERO
     if slot_index < storing_positions.size():
         pos = storing_positions[slot_index]
     else:
@@ -47,60 +57,90 @@ func _on_store_die(die: Die) -> void:
     GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
     # perform move during the next physics frame and await completion
+    die.locked = true
     await get_tree().physics_frame
     var tw = DieMover.prepare_tween_for_die(die, pos)
     await tw.finished
+    die.state = Die.State.IN_HAND
     die.freeze = false
+    die.locked = false
 
 func _on_unstore_die(die: Die) -> void:
+    # enqueue unstore requests
+    if die == null:
+        return
+    event_queue.append({"type": "unstore", "die": die})
+    if not processing_queue:
+        _process_queue()
+
+func _handle_unstore_die(die: Die) -> void:
     if die == null:
         return
     # animate die back to its remembered table position
-    var target := die.last_position_on_table
+    var target: Vector3 = die.last_position_on_table
+    die.locked = true
     await get_tree().physics_frame
     var tw = DieMover.prepare_tween_for_die(die, target)
     await tw.finished
+    die.state = Die.State.ON_TABLE
     die.freeze = false
-
+    die.locked = false    
+    
     storage_model.remove_stored(die)
     # shift remaining stored dice to fill slots
     _recalculate_storing_positions()
     # work on a snapshot to avoid index errors if the underlying array changes during awaits
     var snapshot: Array[Die] = storage_model.stored_dice.duplicate()
     var limit: int = min(snapshot.size(), storing_positions.size())
-    for i in range(limit):
+
+    for i in range (limit):
         var d: Die = snapshot[i]
-        var p: Vector3 = storing_positions[i]
+        d.locked = true
+    
+    for j in range(limit):
+        var d: Die = snapshot[j]
+        var p: Vector3 = storing_positions[j]
         await get_tree().physics_frame
         var tw2 = DieMover.prepare_tween_for_die(d, p)
         await tw2.finished
+        d.state = Die.State.IN_HAND
         d.freeze = false
+        d.locked = false
 
     GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
 func _on_bank_dice() -> void:
+    # enqueue bank requests
+    event_queue.append({"type": "bank"})
+    if not processing_queue:
+        _process_queue()
+
+func _handle_bank_dice() -> void:
     # Move stored dice into banked positions and update GameContext
     if bank_position == null:
         push_error("bank_position is not set")
         return
 
     # accumulate authoritative banked list
-    var current_banked: Array = storage_model.collect_current_banked(dices)
-    var moved: Array = storage_model.clear_stored_to_banked()
+    var current_banked: Array[Die] = storage_model.collect_current_banked(dices)
+    var moved: Array[Die] = storage_model.clear_stored_to_banked()
     var total: int = current_banked.size() + moved.size()
     if total == 0:
         return
 
-    var positions := PositionCalculator.calculate_bank_positions(total, spacing, line_direction, bank_position)
+    var positions: Array[Vector3] = PositionCalculator.calculate_bank_positions(total, spacing, line_direction, bank_position)
 
     # reposition already banked
     for i in range(current_banked.size()):
         if i >= positions.size():
             break
+        # lock the die while we animate it to avoid interaction during movement
+        current_banked[i].locked = true
         await get_tree().physics_frame
         var tw = DieMover.prepare_tween_for_die(current_banked[i], positions[i])
         await tw.finished
         current_banked[i].freeze = false
+        current_banked[i].locked = false
 
     # place newly banked
     var start_idx: int = current_banked.size()
@@ -109,11 +149,30 @@ func _on_bank_dice() -> void:
         var pos_idx: int = start_idx + j
         if pos_idx >= positions.size():
             break
+        # lock the die while animating into bank
+        d.locked = true
         await get_tree().physics_frame
         var tw2 = DieMover.prepare_tween_for_die(d, positions[pos_idx])
         await tw2.finished
         d.state = Die.State.BANKED
         d.freeze = false
+        d.locked = false
 
     GameContext.BankedValue += GameContext.CurrentScoredValue
     GameContext.CurrentScoredValue = 0
+
+func _process_queue() -> void:
+    processing_queue = true
+    while event_queue.size() > 0:
+        var item: Dictionary = event_queue.pop_front()
+        match item.get("type", ""):
+            "store":
+                await _handle_store_die(item.get("die"))
+            "unstore":
+                await _handle_unstore_die(item.get("die"))
+            "bank":
+                await _handle_bank_dice()
+            _:
+                # unknown event, ignore
+                pass
+    processing_queue = false
