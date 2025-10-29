@@ -5,7 +5,6 @@ extends Node3D
 @export var line_direction : Vector3 = Vector3(1, 0, 0)
 @export var bank_position : Node3D
 
-var requested_store_dice : bool = false
 var storing_positions : Array[Vector3] = []
 var next_store_index : int = 0
 var stored_dice : Array[Die] = []
@@ -79,20 +78,6 @@ func unstore_die(die: Die) -> void:
     next_store_index = stored_dice.size()
 
     GameContext.CurrentScoredValue = get_total_stored_value()
-
-
-func _physics_process(_delta: float) -> void:
-    # Handle requested store-dice operation (visual update in physics frame)
-    if requested_store_dice:
-        requested_store_dice = false
-        var index = 0
-        for die in dices:
-            if index >= storing_positions.size():
-                break
-            var store_position = storing_positions[index]
-            # Start a tweened move in the physics frame (don't await so many run in parallel)
-            _move_die_to(die, store_position)
-            index += 1
 
 func get_total_stored_value() -> int:
     var values : Array[int] = []
