@@ -25,16 +25,16 @@ glow_enabled = true
 [node name="World" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, -1.2398566e-08, -2.8106315e-08, 2.9802319e-08, 0.6134586, 0.789727, 7.4505797e-09, -0.7897269, 0.6134586, 5.9604645e-08, 1.3142173, 1.2895601)
+transform = Transform3D(1, 0, 0, 0, 0.7254705, 0.6882533, 0, -0.6882533, 0.7254705, 5.9604645e-08, 1.1038228, 1.5885727)
 
 [node name="Hand" type="Node3D" parent="." node_paths=PackedStringArray("dice", "bank_position")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 0.60373056)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 1.0021874)
 script = ExtResource("2_q2d71")
 dice = [NodePath("../Dice"), NodePath("../Dice2"), NodePath("../Dice3"), NodePath("../Dice4"), NodePath("../Dice5"), NodePath("../Dice6")]
 bank_position = NodePath("../Bank")
 
 [node name="Bank" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 0.9111248)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 1.3095816)
 
 [node name="Table" parent="." instance=ExtResource("1_j0p05")]
 
