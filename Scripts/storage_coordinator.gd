@@ -54,7 +54,7 @@ func _handle_store_die(die: Die) -> void:
     else:
         pos = to_global(Vector3.ZERO)
 
-    GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
+    GameContext.current_scored_value = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
     # perform move during the next physics frame and await completion
     die.begin_animation() # sets MOVING, locked, freeze and clears velocities
@@ -101,7 +101,7 @@ func _handle_unstore_die(die: Die) -> void:
         await tw2.finished
         d.end_animation(Die.State.IN_HAND)
 
-    GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
+    GameContext.current_scored_value = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
 func _on_bank_dice() -> void:
     # enqueue bank requests
@@ -152,8 +152,8 @@ func _handle_bank_dice() -> void:
         # Set explicit final state to BANKED
         d.end_animation(Die.State.BANKED)
 
-    GameContext.BankedValue += GameContext.CurrentScoredValue
-    GameContext.CurrentScoredValue = 0
+    GameContext.banked_value += GameContext.current_scored_value
+    GameContext.current_scored_value = 0
 
 func _process_queue() -> void:
     processing_queue = true
