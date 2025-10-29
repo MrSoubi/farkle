@@ -96,7 +96,9 @@ func _physics_process(_delta: float) -> void:
         die.freeze = false
 
 func get_total_stored_value() -> int:
-    var total := 0
+    var values : Array[int] = []
     for die in stored_dice:
-        total += die.get_top_value()
+        values.append(die.get_top_value())
+    
+    var total : int = ScoreCalculator.calculate_score(values)
     return total

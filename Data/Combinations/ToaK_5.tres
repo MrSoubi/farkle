@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Combination" load_steps=2 format=3 uid="uid://co1cra46cgxu7"]
+
+[ext_resource type="Script" uid="uid://xrsfk5i1473l" path="res://Scripts/combination.gd" id="1_ya1hx"]
+
+[resource]
+script = ExtResource("1_ya1hx")
+values = Array[int]([5, 5, 5])
+base_score = 1000
+metadata/_custom_type_script = "uid://xrsfk5i1473l"
