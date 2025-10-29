@@ -9,12 +9,10 @@ func prepare_tween_for_die(die: Node, target: Vector3, duration: float = 0.12, t
         push_error("DieMover.prepare_tween_for_die: die is null")
         return null
 
-    # Freeze and clear physics before animation
-    die.freeze = true
-    die.linear_velocity = Vector3.ZERO
-    die.angular_velocity = Vector3.ZERO
-
+    # This helper assumes caller prepared the die for animation by calling
+    # die.begin_animation(). It only creates the tween for the position change.
     var tw := die.create_tween()
     var step := tw.tween_property(die, "global_position", target, duration)
     step.set_trans(trans_type).set_ease(ease_type)
+
     return tw

@@ -57,13 +57,11 @@ func _handle_store_die(die: Die) -> void:
     GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
     # perform move during the next physics frame and await completion
-    die.locked = true
+    die.begin_animation() # sets MOVING, locked, freeze and clears velocities
     await get_tree().physics_frame
     var tw = DieMover.prepare_tween_for_die(die, pos)
     await tw.finished
-    die.state = Die.State.IN_HAND
-    die.freeze = false
-    die.locked = false
+    die.end_animation(Die.State.IN_HAND)
 
 func _on_unstore_die(die: Die) -> void:
     # enqueue unstore requests
@@ -78,13 +76,11 @@ func _handle_unstore_die(die: Die) -> void:
         return
     # animate die back to its remembered table position
     var target: Vector3 = die.last_position_on_table
-    die.locked = true
+    die.begin_animation()
     await get_tree().physics_frame
     var tw = DieMover.prepare_tween_for_die(die, target)
     await tw.finished
-    die.state = Die.State.ON_TABLE
-    die.freeze = false
-    die.locked = false    
+    die.end_animation(Die.State.ON_TABLE)
     
     storage_model.remove_stored(die)
     # shift remaining stored dice to fill slots
@@ -95,7 +91,7 @@ func _handle_unstore_die(die: Die) -> void:
 
     for i in range (limit):
         var d: Die = snapshot[i]
-        d.locked = true
+        d.begin_animation()
     
     for j in range(limit):
         var d: Die = snapshot[j]
@@ -103,9 +99,7 @@ func _handle_unstore_die(die: Die) -> void:
         await get_tree().physics_frame
         var tw2 = DieMover.prepare_tween_for_die(d, p)
         await tw2.finished
-        d.state = Die.State.IN_HAND
-        d.freeze = false
-        d.locked = false
+        d.end_animation(Die.State.IN_HAND)
 
     GameContext.CurrentScoredValue = ScoreCalculator.calculate_score(storage_model.get_stored_values())
 
@@ -134,13 +128,14 @@ func _handle_bank_dice() -> void:
     for i in range(current_banked.size()):
         if i >= positions.size():
             break
-        # lock the die while we animate it to avoid interaction during movement
-        current_banked[i].locked = true
+        # Use the centralized animation lifecycle on Die so input/state locking is consistent.
+        var d: Die = current_banked[i]
+        d.begin_animation()
         await get_tree().physics_frame
-        var tw = DieMover.prepare_tween_for_die(current_banked[i], positions[i])
+        var tw = DieMover.prepare_tween_for_die(d, positions[i])
         await tw.finished
-        current_banked[i].freeze = false
-        current_banked[i].locked = false
+        # restore previous/banked state and unlock
+        d.end_animation()
 
     # place newly banked
     var start_idx: int = current_banked.size()
@@ -149,14 +144,13 @@ func _handle_bank_dice() -> void:
         var pos_idx: int = start_idx + j
         if pos_idx >= positions.size():
             break
-        # lock the die while animating into bank
-        d.locked = true
+        # Use Die's begin/end helpers so we keep consistent locking/freeze behavior.
+        d.begin_animation()
         await get_tree().physics_frame
         var tw2 = DieMover.prepare_tween_for_die(d, positions[pos_idx])
         await tw2.finished
-        d.state = Die.State.BANKED
-        d.freeze = false
-        d.locked = false
+        # Set explicit final state to BANKED
+        d.end_animation(Die.State.BANKED)
 
     GameContext.BankedValue += GameContext.CurrentScoredValue
     GameContext.CurrentScoredValue = 0
