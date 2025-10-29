@@ -4,12 +4,32 @@ extends RigidBody3D
 enum State {
     IN_HAND,
     ON_TABLE,
-    SELECTED,
     MOVING,
     BANKED
 }
 
 var state : State
+var locked: bool = false
+var _prev_state: int = -1
+
+func begin_animation(set_state: int = State.MOVING) -> void:
+    # Remember previous state and prevent input/physics while animating
+    _prev_state = int(state)
+    state = set_state as State
+    locked = true
+    freeze = true
+    linear_velocity = Vector3.ZERO
+    angular_velocity = Vector3.ZERO
+
+func end_animation(final_state: int = -1, restore_prev: bool = true) -> void:
+    # Restore state depending on caller intent, and re-enable interactions
+    if final_state != -1:
+        state = final_state as State
+    elif restore_prev and _prev_state != -1:
+        state = _prev_state as State
+    _prev_state = -1
+    freeze = false
+    locked = false
 
 var values : Dictionary = {
     Vector3.UP : 1,
@@ -80,13 +100,16 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
     if not event.is_action_pressed("click"):
         return
 
-    if state == State.IN_HAND or state == State.MOVING or state == State.BANKED:
+    if locked:
+        return
+
+    if state == State.MOVING or state == State.BANKED:
         return
     
     if state == State.ON_TABLE:
-        state = State.SELECTED
+        state = State.IN_HAND
         last_position_on_table = global_position
         EventBus.store_die.emit(self)
-    elif state == State.SELECTED:
+    elif state == State.IN_HAND:
         state = State.ON_TABLE
         EventBus.unstore_die.emit(self)

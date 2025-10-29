@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://q6gnqeh2rxbg" path="res://Scenes/Table.tscn" id="1_j0p05"]
 [ext_resource type="PackedScene" uid="uid://bk6660135j2je" path="res://Scenes/Dice.tscn" id="2_5nsto"]
-[ext_resource type="Script" uid="uid://bcdwgx0nungg4" path="res://Scripts/hand.gd" id="2_gjpho"]
+[ext_resource type="Script" uid="uid://csxsobhaemgbb" path="res://Scripts/storage_coordinator.gd" id="2_q2d71"]
 [ext_resource type="Script" uid="uid://bi1tavelmkp1t" path="res://Scripts/rotator.gd" id="3_5nsto"]
 [ext_resource type="Script" uid="uid://cmjpgjipywig6" path="res://Scenes/lbl_stored_value.gd" id="5_p70al"]
 [ext_resource type="Script" uid="uid://ccqfausfm26bs" path="res://Scenes/lbl_score.gd" id="5_q2d71"]
@@ -31,7 +31,7 @@ transform = Transform3D(1, -1.2398566e-08, -2.8106315e-08, 2.9802319e-08, 0.6134
 
 [node name="Hand" type="Node3D" parent="Table" node_paths=PackedStringArray("dices", "bank_position")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14326182, 0.60373056)
-script = ExtResource("2_gjpho")
+script = ExtResource("2_q2d71")
 dices = [NodePath("../../Dice"), NodePath("../../Dice2"), NodePath("../../Dice3"), NodePath("../../Dice4"), NodePath("../../Dice5"), NodePath("../../Dice6")]
 bank_position = NodePath("../Bank")
 
